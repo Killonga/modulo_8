@@ -1,0 +1,56 @@
+<div class="row justify-content-center pt-5">
+    <div class="col-md-5 mt-5">
+        <div class="card shadow rounded-4 p-4">
+            <h2 class="text-center mb-4">Registro de Usuario</h2>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label class="form-label">Nombre de Usuario</label>
+                    <input type="text" name="username" class="form-control rounded-pill p-2 px-3" required placeholder="User123">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control rounded-pill p-2 px-3" required placeholder="tu@email.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" name="password" class="form-control rounded-pill p-2 px-3" required placeholder="********">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-3">Registrarse <i class="bi bi-person-plus ms-2"></i></button>
+            </form>
+            <p class="text-center mt-4 text-muted small">¿Ya tienes cuenta? <a href="/login" class="text-decoration-none">Inicia sesión</a></p>
+            <div id="registerError" class="alert alert-danger mt-3 d-none"></div>
+            <div id="registerSuccess" class="alert alert-success mt-3 d-none"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        const errorDiv = document.getElementById('registerError');
+        const successDiv = document.getElementById('registerSuccess');
+
+        try {
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (res.ok) {
+                successDiv.textContent = '¡Registro exitoso! Redirigiendo...';
+                successDiv.classList.remove('d-none');
+                errorDiv.classList.add('d-none');
+                setTimeout(() => window.location.href = '/login', 2000);
+            } else {
+                errorDiv.textContent = result.error || 'Error en el registro';
+                errorDiv.classList.remove('d-none');
+                successDiv.classList.add('d-none');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+</script>
