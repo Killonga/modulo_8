@@ -1,16 +1,33 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const sequelize = new Sequelize(
+let sequelize;
+
+if (process.env.DATABASE_URL) {
+  // Configuración para Render (Producción)
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  });
+} else {
+  // Configuración para el Desarrollo Local
+  sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASSWORD,
     {
-        host: process.env.DB_HOST,
-        dialect: 'postgres',
-        port: process.env.DB_PORT,
-        logging: false
+      host: process.env.DB_HOST || 'localhost',
+      dialect: 'postgres',
+      port: process.env.DB_PORT || 5432,
+      logging: false
     }
-);
+  );
+}
 
 module.exports = sequelize;
