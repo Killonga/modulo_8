@@ -1,1 +1,0 @@
-export { Tarea, default as TareaModel } from "./tarea.model.js";
